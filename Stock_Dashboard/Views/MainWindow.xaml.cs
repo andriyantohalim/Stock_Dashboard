@@ -1,7 +1,11 @@
 ﻿using ScottPlot;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -53,9 +57,16 @@ namespace Stock_Dashboard
         private void PlotBtn_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Plot Button is clicked");
-
             GenerateChart();
 
+
+            Ticker ticker = new Ticker();
+
+
+            ticker.getTickerPrices("AAPL", "1700784000", "1701561600", "1d");
+            // 1700784000 --> 24 Nov 2023
+            // 1701561600 --> 03 Dec 2023
+            // Use https://www.epochconverter.com/ for conversion
         }
 
         private void ClearBtn_Click(object sender, RoutedEventArgs e)
@@ -71,6 +82,40 @@ namespace Stock_Dashboard
             //MessageBox.Show("Clear Button is clicked.");
 
             Console.WriteLine("Clear Button is clicked");
+        }
+    }
+
+    public class Ticker
+    {
+        public async void getTickerPrices(String tickerName, String startDate, String stopDate, String interval)
+        {
+            String baseURL = "https://query1.finance.yahoo.com/v7/finance/download/";
+            String requestURI = baseURL
+                + tickerName
+                + "?period1=" + startDate
+                + "&period2=" + stopDate
+                + "&interval=" + interval
+                + "&events=" + "history"
+                + "&includeAdjustedClose=" + "true";
+
+            Console.WriteLine(requestURI);
+
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, requestURI);
+
+            try
+            {
+                var response = await client.SendAsync(request);
+                Console.WriteLine(response.StatusCode.ToString());
+
+                String myTickerPrices = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(myTickerPrices);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
