@@ -24,5 +24,22 @@ namespace Stock_Dashboard
         {
             InitializeComponent();
         }
+
+        private void PlotBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Plot Button is clicked");
+ 
+        }
+
+        private void ClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TickerNameTextBox.Clear();
+            PricePlot.Plot.Clear();
+            VolumePlot.Plot.Clear();
+
+            MessageBox.Show("Clear Button is clicked.");
+
+            Console.WriteLine("Clear Button is clicked");
+        }
     }
 }
